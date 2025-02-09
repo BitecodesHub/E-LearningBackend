@@ -2,6 +2,7 @@ package com.elearning.security;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,6 +26,9 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtService jwtService;
 
+    @Value("${frontendurl}")
+    private String frontendUrl;
+    
     public SecurityConfig(CustomUserDetailsService userDetailsService, JwtService jwtService) {
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
@@ -34,7 +38,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeRequests()
-                .requestMatchers("/api/auth/**","/api/auth/user/{id}" ,"/error", "/swagger-ui/index.html", "/uploads/**","/upload/profilephoto","/ProfilePhotos/**")  // Allow access to the 'uploads/' folder
+                .requestMatchers("/upload","/course/**","/module/**","/api/auth/**","/api/auth/user/{id}" ,"/error", "/swagger-ui/index.html", "/uploads/**","/upload/profilephoto","/ProfilePhotos/**")  // Allow access to the 'uploads/' folder
                 .permitAll() // Allow unauthenticated access to specific endpoints and static files
                 .anyRequest().authenticated() // Protect all other routes
             .and()
@@ -48,7 +52,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("https://www.elearning.bitecodes.com")); // Allow requests from the React app
+        configuration.setAllowedOrigins(List.of(frontendUrl)); // Allow requests from the React app
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);  // Allow credentials (cookies, authorization headers, etc.)

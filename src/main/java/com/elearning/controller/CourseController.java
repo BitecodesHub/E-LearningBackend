@@ -3,6 +3,8 @@ package com.elearning.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +22,20 @@ public class CourseController {
 	
 	 @PostMapping("/add")
 	    public ResponseEntity<String> addCourse(@RequestBody Course course) {
-		 System.err.println("course: "+course.getName()+course.getThumbnailUrl()+course.getDescription());
 		 courseService.addCourse(course);
 		 return ResponseEntity.status(HttpStatus.OK).body("Course Added Successfully" );
+	 }
+	 
+	 @GetMapping("/getCourseName/{id}")
+	 public ResponseEntity<String> getNameById(@PathVariable Long id) {
+		 try {
+		String CourseName=courseService.getCourseName(id);
+		return ResponseEntity.status(HttpStatus.OK).body(CourseName );
+		 }
+		 catch (Exception e) {
+			 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Course Not Found" );
+		}
+		
 	 }
 	
 	

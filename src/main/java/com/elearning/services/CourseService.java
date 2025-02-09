@@ -15,5 +15,8 @@ public class CourseService {
 	 public void addCourse(Course course) {
 		 courseRepository.save(course);
 	    }
-	 
+	 public String getCourseName(Long id) {
+		 Course obj1=courseRepository.getById(id);
+		 return obj1.getName();
+		 }
 }

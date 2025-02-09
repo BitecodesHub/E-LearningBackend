@@ -1,5 +1,6 @@
 package com.elearning.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import jakarta.servlet.*;
@@ -10,13 +11,16 @@ import java.io.IOException;
 @Component
 public class CustomCorsFilter implements Filter {
 
+	  @Value("${frontendurl}")
+	    private String frontendUrl;
+	
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         HttpServletResponse res = (HttpServletResponse) response;
         HttpServletRequest req = (HttpServletRequest) request;
 
-        res.setHeader("Access-Control-Allow-Origin", "https://www.elearning.bitecodes.com"); // Replace with your frontend's URL
+        res.setHeader("Access-Control-Allow-Origin", frontendUrl);
         res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         res.setHeader("Access-Control-Allow-Credentials", "true");
