@@ -11,9 +11,9 @@ import java.io.IOException;
 @Component
 public class CustomCorsFilter implements Filter {
 
-	  @Value("${frontendurl}")
-	    private String frontendUrl;
-	
+    @Value("${app.frontendurl}")
+    private String frontendUrl;
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {

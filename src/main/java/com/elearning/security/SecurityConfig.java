@@ -2,6 +2,7 @@ package com.elearning.security;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,9 +27,9 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtService jwtService;
 
-    @Value("${frontendurl}")
+    @Value("${app.frontendurl}")
     private String frontendUrl;
-    
+
     public SecurityConfig(CustomUserDetailsService userDetailsService, JwtService jwtService) {
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
@@ -72,8 +73,4 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

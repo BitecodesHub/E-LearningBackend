@@ -1,4 +1,4 @@
-package com.elearning.security;
+package com.elearning.response_request;
 
 public class JwtResponse {
     private String token;
