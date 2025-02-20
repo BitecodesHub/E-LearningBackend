@@ -39,7 +39,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
             .authorizeRequests()
-                .requestMatchers("/upload","/course/**","/module/**","/api/auth/**","/api/auth/user/{id}" ,"/error", "/swagger-ui/index.html", "/uploads/**","/upload/profilephoto","/ProfilePhotos/**")  // Allow access to the 'uploads/' folder
+                .requestMatchers("/**","/upload","/course/**","/module/**","/api/auth/**","/api/auth/user/{id}" ,"/error", "/swagger-ui/index.html", "/uploads/**","/upload/profilephoto","/ProfilePhotos/**")  // Allow access to the 'uploads/' folder
                 .permitAll() // Allow unauthenticated access to specific endpoints and static files
                 .anyRequest().authenticated() // Protect all other routes
             .and()

@@ -1,0 +1,32 @@
+package com.elearning.services;
+
+import org.springframework.stereotype.Service;
+
+import com.elearning.models.Certificate;
+import com.elearning.repositories.CertificateRepository;
+
+import java.util.List;
+import java.util.UUID;
+
+@Service
+public class CertificateService {
+
+    private final CertificateRepository certificateRepository;
+
+    public CertificateService(CertificateRepository certificateRepository) {
+        this.certificateRepository = certificateRepository;
+    }
+
+    public List<Certificate> getCertificatesByUser(Long userId) {
+        return certificateRepository.findByUserId(userId);
+    }
+
+    public Certificate issueCertificate(Long userId, Long courseId, double score) {
+        Certificate certificate = new Certificate();
+        certificate.setUserId(userId);
+        certificate.setCourseId(courseId);
+        certificate.setScore(score);
+        certificate.setCredentialId(UUID.randomUUID().toString());
+        return certificateRepository.save(certificate);
+    }
+}
