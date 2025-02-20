@@ -101,6 +101,20 @@ public class AuthController {
 		}
     	return ResponseEntity.ok(user);
     }
+    
+    @GetMapping("/getUsername/{id}")
+    public ResponseEntity<String> getUsernameById(@PathVariable Long id ) {
+    	User user=new User();
+    	try {
+  		user= userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with Id: " + id));
+    	}
+    	catch (Exception e) {
+    		return ResponseEntity.ok("error aa gya");
+		}
+    	String userName=user.getName();
+    	return ResponseEntity.ok(userName);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {

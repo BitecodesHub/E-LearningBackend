@@ -31,6 +31,7 @@ C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\response_request\LoginRequest.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\response_request\LoginResponse.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\response_request\OtpVerificationRequest.java
+C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\response_request\UserCertificateDTO.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\security\CustomCorsFilter.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\security\JwtAuthenticationFilter.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\security\JwtService.java

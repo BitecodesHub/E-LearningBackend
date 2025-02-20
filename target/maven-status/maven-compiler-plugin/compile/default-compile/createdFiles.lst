@@ -16,6 +16,7 @@ com\elearning\models\User.class
 com\elearning\response_request\ExamQuestionRequest.class
 com\elearning\security\JwtAuthenticationFilter.class
 com\elearning\services\OtpService.class
+com\elearning\response_request\UserCertificateDTO.class
 com\elearning\security\CustomCorsFilter.class
 com\elearning\controller\ModuleController.class
 com\elearning\repositories\CertificateRepository.class
