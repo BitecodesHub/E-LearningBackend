@@ -6,6 +6,7 @@ C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\controller\ExamController.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\controller\ExamQuestionController.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\controller\ModuleController.java
+C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\controller\PaymentController.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\controller\UploadImage.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\controller\UploadProfilePhoto.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\ELearningBackendApplication.java
@@ -14,12 +15,14 @@ C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\models\ExamAttempt.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\models\ExamQuestion.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\models\Module.java
+C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\models\Payment.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\models\User.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\CertificateRepository.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\CourseRepository.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\ExamAttemptRepository.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\ExamQuestionRepository.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\ModuleRepository.java
+C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\PaymentRepository.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\repositories\UserRepository.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\response_request\ApiResponse.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\response_request\ExamAttemptRequest.java
@@ -40,4 +43,5 @@ C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\services\ExamQuestionService.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\services\ModuleService.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\services\OtpService.java
+C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\services\PaymentService.java
 C:\Users\Ismail Mansuri\Desktop\LiveProjects\E-LearningBackend\src\main\java\com\elearning\services\RegistrationService.java

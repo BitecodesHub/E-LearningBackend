@@ -32,6 +32,9 @@ public class ExamController {
     public ExamAttempt submitExam(@RequestBody ExamAttemptRequest request) {
         double score = examQuestionService.evaluateExam(request.getAnswers());
         boolean passed = score >= 80; // Example passing criteria
+        if(!(score>=0 && score<=100)) {
+        	score=0;
+        }
         ExamAttempt attempt = new ExamAttempt(null, request.getUserId(), request.getCourseId(), score, passed, LocalDateTime.now());
         ExamAttempt savedAttempt = examAttemptService.saveAttempt(attempt);
         

@@ -1,10 +1,10 @@
 package com.elearning.services;
 
 import org.springframework.stereotype.Service;
-
 import com.elearning.models.Certificate;
 import com.elearning.repositories.CertificateRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,11 +22,13 @@ public class CertificateService {
     }
 
     public Certificate issueCertificate(Long userId, Long courseId, double score) {
+    	 String credentialId = "BC" + String.format("%06d", new java.util.Random().nextInt(9999999));
         Certificate certificate = new Certificate();
         certificate.setUserId(userId);
         certificate.setCourseId(courseId);
         certificate.setScore(score);
-        certificate.setCredentialId(UUID.randomUUID().toString());
+        certificate.setCredentialId(credentialId);
+        certificate.setIssuedAt(LocalDateTime.now());
         return certificateRepository.save(certificate);
     }
 }

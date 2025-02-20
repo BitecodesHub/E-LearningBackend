@@ -24,6 +24,8 @@ public class CertificateController {
 
     @PostMapping
     public Certificate issueCertificate(@RequestParam Long userId, @RequestParam Long courseId, @RequestParam double score) {
-        return certificateService.issueCertificate(userId, courseId, score);
+    	return certificateService.issueCertificate(userId, courseId, score);
+        
+        
     }
 }
