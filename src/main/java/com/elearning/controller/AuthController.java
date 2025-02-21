@@ -1,10 +1,17 @@
 package com.elearning.controller;
 
+import java.util.Map;
+import java.util.Optional;
+
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import com.elearning.models.User;
 import com.elearning.repositories.UserRepository;
@@ -15,6 +22,13 @@ import com.elearning.response_request.OtpVerificationRequest;
 import com.elearning.security.JwtService;
 import com.elearning.services.CustomUserDetailsService;
 import com.elearning.services.RegistrationService;
+import java.util.Collections;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -62,7 +76,61 @@ public class AuthController {
                     .body(new ApiResponse(false, "Update failed: " + e.getMessage()));
         }
     }
+    @PostMapping("/google-auth")
+    public ResponseEntity<?> googleAuth(@RequestBody Map<String, String> request) {
+        try {
+            String email = request.get("email");
+            String name = request.get("name");
+            String picture = request.get("picture");
+            String password = "Google";
+            String username = name;
 
+            if (email == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                     .body(Map.of("success", false, "message", "Google OAuth failed: Email is missing."));
+            }
+
+            // Check if user exists
+            Optional<User> existingUser = userRepository.findByEmail(email);
+            User user;
+
+            if (existingUser.isPresent()) {
+                user = existingUser.get();
+            } else {
+                // Register new user
+                user = new User();
+                user.setEmail(email);
+                user.setName(name != null ? name : "Google User");
+                user.setProfileurl(picture != null ? picture : "https://webcrumbs.cloud/placeholder");
+                user.setUsername(email.split("@")[0]);
+                user.setPassword(password);
+                user.setRole("USER");
+                user.setEnabled(true);
+                userRepository.save(user);
+            }
+
+            // ✅ Generate a JWT token using your backend JWT service
+            String jwtToken = jwtService.generateToken(user.getEmail());
+
+            // ✅ Send JWT token and user details back
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Google login successful",
+                "token", jwtToken,
+                "username", user.getUsername(),
+                "email", user.getEmail(),
+                "profileurl", user.getProfileurl(),
+                "userid", user.getId(),
+                "name", user.getName()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                 .body(Map.of("success", false, "message", "Google OAuth failed: " + e.getMessage()));
+        }
+    }
+
+
+    
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
         try {

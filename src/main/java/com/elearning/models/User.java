@@ -27,7 +27,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false, unique = true)
+	@Column(nullable = true, unique = true)
 	private String username;
 	
 	@Column()
@@ -45,17 +45,17 @@ public class User {
 	@Column()
 	private String state;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String password;
 
 	@Email
 	@Column(nullable = false, unique = true)
 	private String email;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String role;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private boolean enabled = false;
 
 	private String otp;
