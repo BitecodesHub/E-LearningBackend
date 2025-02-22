@@ -38,7 +38,15 @@ public class CertificateController {
     
     @GetMapping("/credential/{credentialId}")
     public Certificate getCertificatesByUser(@PathVariable String credentialId) {
-        return certificateService.getCertificatesByCredentialId(credentialId);
+    	Certificate obj=new Certificate();
+    	try 
+    	{
+    		obj=certificateService.getCertificatesByCredentialId(credentialId);
+    		return obj;
+    	}
+        catch (Exception e) {
+			return null;
+		}
     }
 
 
