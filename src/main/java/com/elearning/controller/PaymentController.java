@@ -41,18 +41,5 @@ public class PaymentController {
         System.err.println("update:-"+response.toString());
         return ResponseEntity.ok(response);
     }
-    
-    @PostMapping("/save-response")
-    public ResponseEntity<String> savePaymentResponse(@RequestBody String paymentResponse) {
-        try {
-            String filePath = "payment_response.json";
-            FileWriter fileWriter = new FileWriter(filePath, true);
-            fileWriter.write(paymentResponse + "\n");
-            fileWriter.close();
-            return ResponseEntity.ok("Payment response saved successfully!");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error saving response");
-        }
-    }
+   
 }
