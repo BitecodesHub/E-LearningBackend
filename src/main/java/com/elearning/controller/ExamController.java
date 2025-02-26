@@ -35,6 +35,7 @@ public class ExamController {
         if(!(score>=0 && score<=100)) {
         	score=0;
         }
+        score=Math.round(score);
         ExamAttempt attempt = new ExamAttempt(null, request.getUserId(), request.getCourseId(), score, passed, LocalDateTime.now());
         ExamAttempt savedAttempt = examAttemptService.saveAttempt(attempt);
         

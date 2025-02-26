@@ -21,7 +21,11 @@ import com.elearning.response_request.LoginResponse;
 import com.elearning.response_request.OtpVerificationRequest;
 import com.elearning.security.JwtService;
 import com.elearning.services.CustomUserDetailsService;
+import com.elearning.services.EmailService;
+import com.elearning.services.OtpService;
 import com.elearning.services.RegistrationService;
+
+import java.time.LocalDateTime;
 import java.util.Collections;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
@@ -39,15 +43,18 @@ public class AuthController {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final CustomUserDetailsService userDetailsService;
+    private final EmailService emailService;
 
+    private final OtpService otpService;
     public AuthController(RegistrationService registrationService, UserRepository userRepository, JwtService jwtService,
-                          AuthenticationManager authenticationManager, CustomUserDetailsService userDetailsService) {
+    		EmailService emailService, AuthenticationManager authenticationManager, OtpService otpService,CustomUserDetailsService userDetailsService) {
         this.registrationService = registrationService;
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
-    }
+        this.emailService=emailService;
+        this.otpService=otpService;    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
@@ -144,6 +151,21 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/resend-otp/{email}")
+    public ResponseEntity<String> resendOtp(@PathVariable String email) {
+    String otp = otpService.generateOtp();
+    LocalDateTime otpExpiry = otpService.getOtpExpiryTime();
+    User user=new User();
+    user=userRepository.findByEmail(email).orElse(null);
+    // Set the OTP and expiry details
+    user.setOtp(otp);
+    user.setOtpExpiry(otpExpiry);
+    userRepository.save(user);
+    new Thread(() -> emailService.sendOtpEmail(email, otp)).start();
+    return ResponseEntity.status(HttpStatus.OK)
+            .body("OTP Sent Successfully");
+   
+    }
 
     @PostMapping("/verify-otp")
     public ResponseEntity<ApiResponse> verifyOtp(@RequestBody OtpVerificationRequest request) {
