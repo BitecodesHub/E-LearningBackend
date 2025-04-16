@@ -30,9 +30,9 @@ public class SkillController {
         }
     }
 
+    
     // Create a skill (admin-only)
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> createSkill(@RequestBody Skill skill) {
         try {
             if (skill.getName() == null || skill.getName().trim().isEmpty()) {
@@ -40,18 +40,22 @@ public class SkillController {
                         .body(new ApiResponse(false, "Skill name is required"));
             }
 
+            String skillName = skill.getName().trim();
+
             // Check for duplicate name
-            if (skillRepository.findByName(skill.getName()).getName().equals(skill.getName())) {
+            Skill existingSkill = skillRepository.findByName(skillName);
+            if (existingSkill != null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(new ApiResponse(false, "Skill name already exists"));
             }
 
             Skill newSkill = new Skill();
-            newSkill.setName(skill.getName().trim());
+            newSkill.setName(skillName);
             skillRepository.save(newSkill);
 
             return ResponseEntity.ok(new ApiResponse(true, "Skill created successfully"));
         } catch (Exception e) {
+            e.printStackTrace(); // helpful for debugging
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(false, "Failed to create skill: " + e.getMessage()));
         }
@@ -59,7 +63,6 @@ public class SkillController {
 
     // Update a skill (admin-only)
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> updateSkill(@PathVariable Long id, @RequestBody Skill updatedSkill) {
         try {
             Optional<Skill> existingSkillOpt = skillRepository.findById(id);
@@ -93,7 +96,6 @@ public class SkillController {
 
     // Delete a skill (admin-only)
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse> deleteSkill(@PathVariable Long id) {
         try {
             if (!skillRepository.existsById(id)) {

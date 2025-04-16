@@ -12,6 +12,7 @@ import com.elearning.response_request.ConnectionUpdate;
 import com.elearning.response_request.LoginRequest;
 import com.elearning.response_request.LoginResponse;
 import com.elearning.response_request.OtpVerificationRequest;
+import com.elearning.response_request.UserUpdateDTO;
 import com.elearning.security.JwtService;
 import com.elearning.services.CustomUserDetailsService;
 import com.elearning.services.EmailService;
@@ -71,58 +72,58 @@ public class AuthController {
         this.connectionRepository = connectionRepository;
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody User updatedUser) {
-        try {
-            Long parsedId;
+    
+
+        @PutMapping("/update/{id}")
+        public ResponseEntity<?> updateUser(@PathVariable String id, @RequestBody UserUpdateDTO updatedUser) {
             try {
-                parsedId = Long.valueOf(id);
-            } catch (NumberFormatException e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(new ApiResponse(false, "Invalid user ID: " + id));
-            }
-            User existingUser = userRepository.findById(parsedId)
-                    .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + parsedId));
+                Long parsedId;
+                try {
+                    parsedId = Long.valueOf(id);
+                } catch (NumberFormatException e) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(new ApiResponse(false, "Invalid user ID: " + id));
+                }
+                User existingUser = userRepository.findById(parsedId)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found with ID: " + parsedId));
 
-            if (updatedUser.getUsername() != null) existingUser.setUsername(updatedUser.getUsername());
-            if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName());
-            if (updatedUser.getProfileurl() != null) existingUser.setProfileurl(updatedUser.getProfileurl());
-            if (updatedUser.getPhonenum() != null) existingUser.setPhonenum(updatedUser.getPhonenum());
-            if (updatedUser.getState() != null) existingUser.setState(updatedUser.getState());
-            if (updatedUser.getPassword() != null) existingUser.setPassword(updatedUser.getPassword());
-            if (updatedUser.getBio() != null) existingUser.setBio(updatedUser.getBio());
-            if (updatedUser.getRole() != null) existingUser.setRole(updatedUser.getRole());
-            if (updatedUser.getTimezone() != null) existingUser.setTimezone(updatedUser.getTimezone());
-            if (updatedUser.getAvailability() != null) existingUser.setAvailability(updatedUser.getAvailability());
-            if (updatedUser.getSkillIds() != null) {
-                List<Long> skillIds = updatedUser.getSkillIds();
+                // Update basic fields
+                if (updatedUser.getUsername() != null) existingUser.setUsername(updatedUser.getUsername());
+                if (updatedUser.getName() != null) existingUser.setName(updatedUser.getName());
+                if (updatedUser.getProfileurl() != null) existingUser.setProfileurl(updatedUser.getProfileurl());
+                if (updatedUser.getPhonenum() != null) existingUser.setPhonenum(updatedUser.getPhonenum());
+                if (updatedUser.getState() != null) existingUser.setState(updatedUser.getState());
+                if (updatedUser.getPassword() != null) existingUser.setPassword(updatedUser.getPassword());
+                if (updatedUser.getBio() != null) existingUser.setBio(updatedUser.getBio());
+                if (updatedUser.getRole() != null) existingUser.setRole(updatedUser.getRole());
+                if (updatedUser.getTimezone() != null) existingUser.setTimezone(updatedUser.getTimezone());
+                if (updatedUser.getAvailability() != null) existingUser.setAvailability(updatedUser.getAvailability());
+
+                // Update skills
                 List<Skill> updatedSkills = new ArrayList<>();
-
-                // Validate skill IDs
-                if (!skillIds.isEmpty()) {
-                    List<Skill> foundSkills = skillRepository.findAllById(skillIds);
-                    if (foundSkills.size() != skillIds.size()) {
+                if (updatedUser.getSkillIds() != null && !updatedUser.getSkillIds().isEmpty()) {
+                    List<Skill> foundSkills = skillRepository.findAllById(updatedUser.getSkillIds());
+                    if (foundSkills.size() != updatedUser.getSkillIds().size()) {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body(new ApiResponse(false, "One or more skill IDs are invalid"));
                     }
                     updatedSkills.addAll(foundSkills);
                 }
+                existingUser.setSkills(updatedSkills); // Updates the user_skills join table
 
-                existingUser.setSkills(updatedSkills);
-            } else {
-                existingUser.setSkills(new ArrayList<>());
+                userRepository.save(existingUser);
+                return ResponseEntity.ok(new ApiResponse(true, "User updated successfully."));
+            } catch (UsernameNotFoundException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(new ApiResponse(false, e.getMessage()));
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(new ApiResponse(false, "Update failed: " + e.getMessage()));
             }
-
-            userRepository.save(existingUser);
-            return ResponseEntity.ok(new ApiResponse(true, "User updated successfully."));
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(false, e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(false, "Update failed: " + e.getMessage()));
         }
-    }
+    
+
+    
 
     @PostMapping("/google-auth")
     public ResponseEntity<?> googleAuth(@RequestBody Map<String, String> request) {
@@ -164,7 +165,8 @@ public class AuthController {
                     "email", user.getEmail(),
                     "profileurl", user.getProfileurl(),
                     "userid", user.getId(),
-                    "name", user.getName()
+                    "name", user.getName(),
+                    "role",user.getRole()
             ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
