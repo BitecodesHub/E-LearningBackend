@@ -30,7 +30,6 @@ public class CertificateController {
         return ResponseEntity.ok(leaderboard);
     }
 
-   
     @GetMapping("/user/{userId}")
     public List<Certificate> getCertificatesByUser(@PathVariable Long userId) {
         return certificateService.getCertificatesByUser(userId);
