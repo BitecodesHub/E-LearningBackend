@@ -1,7 +1,6 @@
 package com.elearning.security;
 
 import io.jsonwebtoken.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -12,28 +11,39 @@ import java.util.function.Function;
 @Service
 public class JwtService {
 
-    private String SECRET_KEY="ismailkaranhamzahabcd12349999zahabcd12349999d12349999";
+    private String SECRET_KEY = "ismailkaranhamzahabcd12349999zahabcd12349999d12349999";
 
-    private long EXPIRATION_TIME=86400000; // Time in milliseconds
+    private long EXPIRATION_TIME = 86400000; // 24 hours in milliseconds
 
     // Extract the username from token
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
-    // Get all claims from the token
-    private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
+    // Extract the user ID from token
+    public Long getUserIdFromToken(String token) {
+        String idStr = getClaimFromToken(token, claims -> claims.get("id", String.class));
+        return idStr != null ? Long.parseLong(idStr) : null;
     }
 
-    // Generate JWT token
-    public String generateToken(String username) {
+    // Get all claims from the token
+    private Claims getAllClaimsFromToken(String token) {
+        try {
+            return Jwts.parserBuilder()
+                    .setSigningKey(SECRET_KEY)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (JwtException e) {
+            throw new IllegalArgumentException("Invalid JWT token", e);
+        }
+    }
+
+    // Generate JWT token with username and userId
+    public String generateToken(String username, Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("subject", username);
+        claims.put("id", userId.toString());
         claims.put("created", new Date());
         claims.put("expiration", new Date(System.currentTimeMillis() + EXPIRATION_TIME));
 
@@ -41,7 +51,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Expiration time
+                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
@@ -50,12 +60,11 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try {
             Claims claims = getAllClaimsFromToken(token);
-            return !isTokenExpired(token);  // Ensure expiration is checked explicitly
+            return !isTokenExpired(token);
         } catch (JwtException e) {
-            return false;  // Any exception (e.g., parsing, malformed token) means it's invalid
+            return false;
         }
     }
-
 
     // Extract a specific claim
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
@@ -70,6 +79,10 @@ public class JwtService {
 
     // Check if the token is expired
     public boolean isTokenExpired(String token) {
-        return getExpirationDateFromToken(token).before(new Date());
+        try {
+            return getExpirationDateFromToken(token).before(new Date());
+        } catch (JwtException e) {
+            return true;
+        }
     }
 }

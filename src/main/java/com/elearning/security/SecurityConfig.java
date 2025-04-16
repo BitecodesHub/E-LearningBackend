@@ -37,15 +37,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
-            .authorizeRequests()
-                .requestMatchers("/**","/upload","/course/**","/module/**","/api/auth/**","/api/auth/user/{id}" ,"/error", "/swagger-ui/index.html", "/uploads/**","/upload/profilephoto","/ProfilePhotos/**")  // Allow access to the 'uploads/' folder
-                .permitAll() // Allow unauthenticated access to specific endpoints and static files
-                .anyRequest().authenticated() // Protect all other routes
-            .and()
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class) // Add JWT filter before form login
-            .formLogin().disable() // Disable form login as JWT is used for authentication
-            .cors();  // Enable CORS support through Spring Security
+        http.csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**", "/ws/**", "/upload", "/course/**", "/module/**", "/error",
+                                "/swagger-ui/**", "/v3/api-docs/**", "/Uploads/**", "/ProfilePhotos/**")
+                        .permitAll()
+                        .anyRequest().authenticated()
+                )
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -53,13 +53,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(frontendUrl)); // Allow requests from the React app
+        configuration.setAllowedOrigins(List.of(frontendUrl));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);  // Allow credentials (cookies, authorization headers, etc.)
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("Authorization"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Apply the configuration to all endpoints
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
@@ -73,4 +74,8 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

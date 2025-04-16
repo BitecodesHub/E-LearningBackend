@@ -2,14 +2,16 @@ package com.elearning.models;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.*;
-import java.util.Collection;
-import java.util.Collections;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -61,14 +63,33 @@ public class User {
 	private String otp;
 	private LocalDateTime otpExpiry;
 
-	
+	private String bio;
+	private String timezone;
+	private String availability;
 
-	public User(Long id, String username, String name, String profileurl,
-			@Size(min = 10, max = 15, message = "Phone number must be between 10 to 15 digits") @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must contain only digits") String phonenum,
-			String state, String password, @Email String email, String role, boolean enabled, String otp,
-			LocalDateTime otpExpiry) {
-		this.id = id;
+	@Column(name = "created_at")
+	private LocalDateTime createdAt = LocalDateTime.now();
+
+	@JsonIgnore
+	@ManyToMany
+	@JoinTable(
+			name = "user_skills",
+			joinColumns = @JoinColumn(name = "user_id"),
+			inverseJoinColumns = @JoinColumn(name = "skill_id")
+	)
+	private List<Skill> skills = new ArrayList<>();
+
+	@OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Connection> sentConnections = new ArrayList<>();
+
+	@OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY)
+	@JsonIgnore
+	private List<Connection> receivedConnections = new ArrayList<>();
+
+	public User(String username, Long id, String name, String profileurl, String phonenum, String state, String password, String email, String role, boolean enabled, String otp, LocalDateTime otpExpiry, String bio, String timezone, String availability, LocalDateTime createdAt, List<Skill> skills, List<Connection> sentConnections, List<Connection> receivedConnections) {
 		this.username = username;
+		this.id = id;
 		this.name = name;
 		this.profileurl = profileurl;
 		this.phonenum = phonenum;
@@ -79,6 +100,13 @@ public class User {
 		this.enabled = enabled;
 		this.otp = otp;
 		this.otpExpiry = otpExpiry;
+		this.bio = bio;
+		this.timezone = timezone;
+		this.availability = availability;
+		this.createdAt = createdAt;
+		this.skills = skills;
+		this.sentConnections = sentConnections;
+		this.receivedConnections = receivedConnections;
 	}
 
 	public String getName() {
@@ -185,4 +213,68 @@ public class User {
 		return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 	}
 
+	public String getBio() {
+		return bio;
+	}
+
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
+
+	public String getTimezone() {
+		return timezone;
+	}
+
+	public void setTimezone(String timezone) {
+		this.timezone = timezone;
+	}
+
+	public String getAvailability() {
+		return availability;
+	}
+
+	public void setAvailability(String availability) {
+		this.availability = availability;
+	}
+
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public List<Skill> getSkills() {
+		return skills;
+	}
+
+	public void setSkills(List<Skill> skills) {
+		this.skills = skills;
+	}
+
+	public List<Connection> getSentConnections() {
+		return sentConnections;
+	}
+
+	public void setSentConnections(List<Connection> sentConnections) {
+		this.sentConnections = sentConnections;
+	}
+
+	public List<Connection> getReceivedConnections() {
+		return receivedConnections;
+	}
+
+	public void setReceivedConnections(List<Connection> receivedConnections) {
+		this.receivedConnections = receivedConnections;
+	}
+
+	// Helper for skill IDs
+	public List<Long> getSkillIds() {
+		return skills != null ? skills.stream().map(Skill::getId).collect(Collectors.toList()) : new ArrayList<>();
+	}
+
+	public void setSkillIds(List<Long> skillIds) {
+		// This is a transient setter for deserialization; actual skill setting is handled in controller
+	}
 }
